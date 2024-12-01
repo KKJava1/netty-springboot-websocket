@@ -30,6 +30,7 @@
         <java.version>17</java.version>
     </properties>
     <dependencies>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
@@ -50,19 +51,36 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-autoconfigure-processor</artifactId>
             <optional>true</optional>
+            <!--
+            这是 Spring Boot 提供的自动配置注解处理器，用于在编译时优化自动配置功能。
+            它会生成一些元信息文件，以帮助 Spring Boot 更高效地加载自动配置类。
+            设置为 optional 是因为它主要是开发工具支持的组件，运行时并非必须。
+            -->
         </dependency>
 
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-all</artifactId>
             <version>4.1.89.Final</version>
+            <!--
+            Netty 是一个异步事件驱动的网络框架，支持 TCP、UDP 等协议。
+            此依赖包含 Netty 的所有模块，适用于构建高性能网络应用。
+            使用此依赖时需注意其体积较大，可根据需求选择具体模块（如 netty-buffer、netty-codec 等）。
+            -->
         </dependency>
 
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.18.26</version>
+            <!--
+            Lombok 是一个代码生成工具，通过注解简化 Java 开发。
+            例如，使用 @Getter/@Setter 自动生成 getter 和 setter 方法。
+            此依赖在编译时生效，但需要在 IDE 中安装对应插件以支持注解的解析。
+            -->
         </dependency>
+
+
     </dependencies>
 
     <build>
