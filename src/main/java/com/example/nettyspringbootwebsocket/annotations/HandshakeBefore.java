@@ -10,8 +10,6 @@ import java.lang.annotation.Target;
  * @date 2023/6/21
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface WsServerEndpoint {
-
-    String value() default "/ws/{arg}";
+@Target(ElementType.METHOD)
+public @interface HandshakeBefore {
 }
