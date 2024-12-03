@@ -4,7 +4,6 @@ package com.example.nettyspringbootwebsocket.netty;
 import com.example.nettyspringbootwebsocket.support.WebsocketServerEndpoint;
 import io.netty.channel.Channel;
 import org.springframework.util.AntPathMatcher;
-import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Method;
 import java.util.Map;
@@ -15,12 +14,18 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author KangJunJie
  * @date 2024/12/2
  * 这是 WebSocket 服务的核心管理类，主要职责是 存储、匹配、验证和分发 WebSocket 请求到具体的服务端点。
+ * 负责维护路径和端点之间的映射关系
  */
 
 public class WebsocketActionDispatch {
 
     private AntPathMatcher antPathMatcher = new AntPathMatcher();
 
+    /**
+     * 示例：{
+     *     "/websocket/{uid}/{arg}": WebsocketServerEndpoint 实例
+     * }
+     */
     private final static Map<String, WebsocketServerEndpoint> endpointMap = new ConcurrentHashMap<>(16);
 
 

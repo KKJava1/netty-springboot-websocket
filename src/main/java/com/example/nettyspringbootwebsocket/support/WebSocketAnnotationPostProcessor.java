@@ -2,6 +2,7 @@ package com.example.nettyspringbootwebsocket.support;
 
 import com.example.nettyspringbootwebsocket.WebsocketProperties;
 import com.example.nettyspringbootwebsocket.annotations.WsServerEndpoint;
+import com.example.nettyspringbootwebsocket.netty.NettyWebsocketServer;
 import com.example.nettyspringbootwebsocket.netty.WebsocketActionDispatch;
 import lombok.SneakyThrows;
 import org.springframework.aop.support.AopUtils;
@@ -64,15 +65,17 @@ public class WebSocketAnnotationPostProcessor implements SmartInitializingSingle
              * 创建 WebsocketServerEndpoint 对象，包含服务端点的：
              * 目标类（pojoClazz）：targetClass
              * 类实例（object）：从 Spring 容器中获取
-             * 路径（path）：从注解中提取的路径
+             * 路径（path）：wsServerEndpoint.value()从注解中提取的路径
              */
             WebsocketServerEndpoint websocketServerEndpoint = new WebsocketServerEndpoint(targetClass
                     ,beanFactory.getBean(targetClass),wsServerEndpoint.value());
+            //将每个端点及其方法绑定到 WebsocketActionDispatch 分发器中。
             actionDispatch.addWebsocketServerEndpoint(websocketServerEndpoint);
         }
-//        NettyWebsocketServer websocketServer = new NettyWebsocketServer(actionDispatch,websocketProperties);
-//        // 启动websocket
-//        websocketServer.start();
+        //传入事件分发器actionDispatch和websocketProperties默认配置
+        NettyWebsocketServer websocketServer = new NettyWebsocketServer(actionDispatch,websocketProperties);
+        // 启动websocket
+        websocketServer.start();
     }
 
 
