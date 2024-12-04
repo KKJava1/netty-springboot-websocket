@@ -38,7 +38,9 @@ public class NettyWebsocketServer {
         ServerBootstrap serverBootstrap = new ServerBootstrap();
         serverBootstrap.group(boss,work)
                 .channel(NioSctpServerChannel.class)
-                //通过匿名内部类来实现责任链模式调用
+                /**
+                 * 通过匿名内部类来实现ChannelPipeline责任链模式调用
+                 */
                 .childHandler(new ChannelInitializer<>() {
                     @Override
                     protected void initChannel(Channel channel) throws Exception {
