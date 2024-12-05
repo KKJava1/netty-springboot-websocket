@@ -9,6 +9,7 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.sctp.nio.NioSctpServerChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
+import io.netty.handler.codec.http.websocketx.WebSocketFrameAggregator;
 import io.netty.handler.timeout.IdleStateHandler;
 
 /**
@@ -51,7 +52,9 @@ public class NettyWebsocketServer {
                                 .addLast(new IdleStateHandler(websocketProperties.getReaderIdleTimeSeconds()
                                         ,websocketProperties.getWriterIdleTimeSeconds()
                                         ,websocketProperties.getAllIdleTimeSeconds()))
-                                .addLast(new HttpRequestHandler(websocketActionDispatch));
+                                .addLast(new HttpRequestHandler(websocketActionDispatch))
+                                .addLast(new WebSocketFrameAggregator(Integer.MAX_VALUE))
+                                .addLast(new GenericHandler(websocketActionDispatch));
                     }
                 });
 

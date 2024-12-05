@@ -49,7 +49,7 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
         ctx.channel().attr(AttributeKeyConstant.uriTemplateVariables).set(uriTemplateVariables);
         // 分发握手事件
         websocketActionDispatch.dispatch(request.uri(), WebsocketActionDispatch.Action.HAND_SHAKE, ctx.channel());
-        // 准备 WebSocket 的握手
+        // 准备 WebSocket 的握手 WebSocketServerHandshakerFactory 是 Netty 提供的工具类，用于生成 WebSocket 握手处理器。
         WebSocketServerHandshakerFactory wsFactory = new WebSocketServerHandshakerFactory(getWebSocketLocation(request), null, true, 65536);
         WebSocketServerHandshaker handshaker = wsFactory.newHandshaker(request);
         if (handshaker == null) {
