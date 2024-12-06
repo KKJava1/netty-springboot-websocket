@@ -26,6 +26,8 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
         this.websocketActionDispatch = websocketActionDispatch;
     }
 
+
+
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest request) throws Exception {
         // 校验请求路径
@@ -49,7 +51,11 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
         ctx.channel().attr(AttributeKeyConstant.uriTemplateVariables).set(uriTemplateVariables);
         // 分发握手事件
         websocketActionDispatch.dispatch(request.uri(), WebsocketActionDispatch.Action.HAND_SHAKE, ctx.channel());
-        // 准备 WebSocket 的握手 WebSocketServerHandshakerFactory 是 Netty 提供的工具类，用于生成 WebSocket 握手处理器。
+        // 准备 WebSocket 的握手验证：确保连接的合法性，如 URI 校验、权限校验等。
+        /**
+         * WebSocketServerHandshakerFactory 是 Netty 提供的一个工具类，专门用于创建 WebSocket 握手处理器（WebSocketServerHandshaker）。
+         * 它的主要作用是帮助服务器处理 WebSocket 协议升级请求，并生成适合客户端请求版本的 WebSocket 握手实现类。
+         */
         WebSocketServerHandshakerFactory wsFactory = new WebSocketServerHandshakerFactory(getWebSocketLocation(request), null, true, 65536);
         WebSocketServerHandshaker handshaker = wsFactory.newHandshaker(request);
         if (handshaker == null) {
@@ -58,6 +64,7 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
         else {
             handshaker.handshake(ctx.channel(), request).addListener(future -> {
                 if (future.isSuccess()) {
+                    //将 WebSocket 连接建立成功后的事件分发到应用层
                     websocketActionDispatch.dispatch(request.uri(), WebsocketActionDispatch.Action.OPEN,ctx.channel());
                 } else {
                     handshaker.close(ctx.channel(), new CloseWebSocketFrame());
@@ -91,10 +98,10 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
      {
          GET /path HTTP/1.1
          Host: example.com
-         Connection: Upgrade
-         Upgrade: websocket
-         Sec-WebSocket-Key: x3JJHMbDL1EzLkh9L1+K2Q==
-         Sec-WebSocket-Version: 13
+         Connection: Upgrade：表明请求是一个协议升级请求。
+         Upgrade: websocket：表明希望将协议升级为 WebSocket。
+         Sec-WebSocket-Key: x3JJHMbDL1EzLkh9L1+K2Q==  客户端随机生成的 key，用于服务器生成响应
+         Sec-WebSocket-Version: 13   WebSocket 协议版本
      }
      服务器响应握手请求：
      如果服务器支持 WebSocket 协议并且验证通过，它会返回一个 HTTP 101 响应（表示协议切换），并且升级连接至 WebSocket协议。
@@ -102,10 +109,10 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
      响应头示例：
      makefile
      {
-         HTTP/1.1 101 Switching Protocols
+         HTTP/1.1 101 Switching Protocols     状态码 101 Switching Protocols 表明协议切换成功。
          Upgrade: websocket
          Connection: Upgrade
-         Sec-WebSocket-Accept: x3JJHMbDL1EzLkh9L1+K2Q
+         Sec-WebSocket-Accept: x3JJHMbDL1EzLkh9L1+K2Q    Sec-WebSocket-Accept 是服务器根据客户端提供的 Sec-WebSocket-Key 计算出的值。
      }
      */
     private boolean verifyRequest(FullHttpRequest request) {

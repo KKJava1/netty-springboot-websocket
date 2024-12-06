@@ -27,4 +27,12 @@ public class GenericHandler extends ChannelInboundHandlerAdapter {
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         super.channelActive(ctx);
     }
+
+    @Override
+    public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
+        String uri = ctx.channel().attr(AttributeKeyConstant.PATH_KEY).get();
+        ctx.channel().attr(AttributeKeyConstant.idleStateEvent).set(evt);
+        websocketActionDispatch.dispatch(uri, WebsocketActionDispatch.Action.EVENT,ctx.channel());
+        super.userEventTriggered(ctx, evt);
+    }
 }

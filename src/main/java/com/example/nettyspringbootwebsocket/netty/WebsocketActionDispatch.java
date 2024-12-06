@@ -4,6 +4,7 @@ package com.example.nettyspringbootwebsocket.netty;
 import com.example.nettyspringbootwebsocket.support.WebsocketServerEndpoint;
 import io.netty.channel.Channel;
 import org.springframework.util.AntPathMatcher;
+import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Method;
 import java.util.Map;
@@ -94,8 +95,14 @@ public class WebsocketActionDispatch {
                     break;
             }
             if (Objects.nonNull(method)) {
+                /**
+                 * https://blog.csdn.net/weixin_51360020/article/details/142994610 深入理解ReflectionUtils反射工具的使用
+                 * 简单来说ReflectionUtils是在原生反射API的基础上又套了一层缓存declaredMethodsCache，类型是ConcurrentReferenceHashMap类型，比起原生的反射的效率回更快
+                 */
 //                Object[] args = new MethodParamsBuild().getMethodArgumentValues(method,channel);
-//                ReflectionUtils.invokeMethod(method,obj,args);
+                Object args = new Object();
+                //执行某个对象的指定无/有参方法   args拿到获取的请求头和参数
+                ReflectionUtils.invokeMethod(method,obj,args);
             }
         }
 
