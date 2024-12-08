@@ -52,6 +52,7 @@ public class NettyWebsocketServer {
                                 .addLast(new IdleStateHandler(websocketProperties.getReaderIdleTimeSeconds()
                                         ,websocketProperties.getWriterIdleTimeSeconds()
                                         ,websocketProperties.getAllIdleTimeSeconds()))
+                                //用于处理升级websocket协议的调用、握手和开启时候的调度
                                 .addLast(new HttpRequestHandler(websocketActionDispatch))
                                 .addLast(new WebSocketFrameAggregator(Integer.MAX_VALUE))
                                 .addLast(new GenericHandler(websocketActionDispatch));

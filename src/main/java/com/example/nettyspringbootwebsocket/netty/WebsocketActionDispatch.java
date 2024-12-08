@@ -1,6 +1,7 @@
 package com.example.nettyspringbootwebsocket.netty;
 
 
+import com.example.nettyspringbootwebsocket.support.MethodParamsBuild;
 import com.example.nettyspringbootwebsocket.support.WebsocketServerEndpoint;
 import io.netty.channel.Channel;
 import org.springframework.util.AntPathMatcher;
@@ -95,13 +96,17 @@ public class WebsocketActionDispatch {
                     break;
             }
             if (Objects.nonNull(method)) {
+
+                /**
+                 * MethodParamsBuild 负责为反射方法提供参数。它根据目标方法的参数类型和注解，通过一系列的 MethodArgumentResolver 解析器来获取参数值。
+                 * 如HAND_SHAKE需要获取到，head和UserId等参数
+                 */
+                Object[] args = new MethodParamsBuild().getMethodArgumentValues(method,channel);
                 /**
                  * https://blog.csdn.net/weixin_51360020/article/details/142994610 深入理解ReflectionUtils反射工具的使用
                  * 简单来说ReflectionUtils是在原生反射API的基础上又套了一层缓存declaredMethodsCache，类型是ConcurrentReferenceHashMap类型，比起原生的反射的效率回更快
+                 * 执行某个对象的指定无/有参方法   args拿到获取的请求头和参数
                  */
-//                Object[] args = new MethodParamsBuild().getMethodArgumentValues(method,channel);
-                Object args = new Object();
-                //执行某个对象的指定无/有参方法   args拿到获取的请求头和参数
                 ReflectionUtils.invokeMethod(method,obj,args);
             }
         }
