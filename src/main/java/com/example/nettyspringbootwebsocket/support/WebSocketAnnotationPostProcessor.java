@@ -28,7 +28,6 @@ public class WebSocketAnnotationPostProcessor implements SmartInitializingSingle
     private WebsocketProperties websocketProperties;
 
     //实现Spring的后置处理器，在Spring容器加载完后执行的方法
-
     @Override
     public void afterSingletonsInstantiated() {
         //1.获取带有SpringBoot注解的类
